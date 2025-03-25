@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.OrderInfoMapper">
+
+    <!-- 分页获取订单信息 -->
+    <select id="selectOrderPage" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral,
+        ui.name as userName,
+        ui.sex as userSex,
+        ui.images as userImages,
+        ei.id as evaluateId,
+        ui.phone,
+        si.name as staffName,
+        si.sex as staffSex,
+        si.images as staffImages,
+        si.phone as staffPhone
+        from
+        order_info oi
+        left join user_info ui on (ui.id = oi.user_id)
+        left join staff_info si on (si.id = oi.staff_ids)
+        left join evaluate_info ei on (ei.order_id = oi.id)
+        where 1 = 1
+        <if test="orderInfo.code != null and orderInfo.code != ''">
+            AND di.code LIKE CONCAT('%',#{orderInfo.code},'%')
+        </if>
+        <if test="orderInfo.userName != null and orderInfo.userName != ''">
+            AND ui.name LIKE CONCAT('%',#{orderInfo.userName},'%')
+        </if>
+        <if test="orderInfo.orderName != null and orderInfo.orderName != ''">
+            AND di.order_name LIKE CONCAT('%',#{orderInfo.orderName},'%')
+        </if>
+        <if test="orderInfo.phone != null and orderInfo.phone != ''">
+            AND ui.phone LIKE CONCAT('%',#{orderInfo.phone},'%')
+        </if>
+        <if test="orderInfo.userId != null">
+            AND ui.user_id = #{orderInfo.userId}
+        </if>
+        <if test="orderInfo.staffIds != null and orderInfo.staffIds != ''">
+            AND si.user_id = #{orderInfo.staffIds}
+        </if>
+        <if test="orderInfo.staffFlag != null and orderInfo.staffFlag != ''">
+            AND oi.status = '1'
+        </if>
+        order by oi.create_date desc
+    </select>
+
+    <!-- 查询未审核订单 -->
+    <select id="notCheckList" resultType="java.util.LinkedHashMap">
+        select oi.id,
+               oi.code,
+               oi.order_name,
+               oi.user_id,
+               oi.total,
+               oi.create_date,
+               oi.remark,
+               oi.status,
+               oi.staff_ids,
+               oi.pay_date,
+               oi.goods_type,
+               oi.images,
+               oi.weight,
+               oi.height,
+               oi.width,
+               oi.start_address_id,
+               oi.end_address_id,
+               oi.delivery_date,
+               oi.logistics_info,
+               oi.finish_date,
+               oi.kilometre,
+               oi.distribution_price,
+               oi.order_price,
+               oi.discount_id,
+               oi.after_order_price,
+               oi.integral,
+               ui.name   as userName,
+               ui.sex    as userSex,
+               ui.images as userImages,
+               ei.id     as evaluateId,
+               ui.phone,
+               si.name   as staffName,
+               si.sex    as staffSex,
+               si.images as staffImages,
+               si.phone  as staffPhone
+        from order_info oi
+                 left join user_info ui on (ui.id = oi.user_id)
+                 left join staff_info si on (si.id = oi.staff_ids)
+                 left join evaluate_info ei on (ei.order_id = oi.id)
+        where 1 = 1
+          AND oi.status = '1'
+        order by oi.create_date desc
+    </select>
+
+    <!-- 根据订单ID查询订单信息 -->
+    <select id="queryOrderByIds" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral,
+        ui.name as userName,
+        IFNULL( ui.sex, "1") as userSex,
+        ui.images as userImages,
+        ei.id as evaluateId,
+        ui.phone,
+        si.name as staffName,
+        si.sex as staffSex,
+        si.images as staffImages,
+        si.phone as staffPhone
+        from
+        order_info oi
+        left join user_info ui on (ui.id = oi.user_id)
+        left join staff_info si on (si.id = oi.staff_ids)
+        left join evaluate_info ei on (ei.order_id = oi.id)
+        where 1 = 1
+        <if test="orderIdList != null and orderIdList.size() != 0">
+            AND oi.id IN
+            <foreach collection="orderIdList" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by oi.create_date desc
+    </select>
+
+    <!-- 查询订单信息 -->
+    <select id="queryOrderByStaff" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral,
+        ui.name as userName,
+        ui.sex as userSex,
+        ui.images as userImages,
+        ei.id as evaluateId,
+        ui.phone,
+        si.name as staffName,
+        si.sex as staffSex,
+        si.images as staffImages,
+        si.phone as staffPhone
+        from
+        order_info oi
+        left join user_info ui on (ui.id = oi.user_id)
+        left join staff_info si on (si.id = oi.staff_ids)
+        left join evaluate_info ei on (ei.order_id = oi.id)
+        where 1 = 1
+        AND si.user_id = #{staffId}
+        order by oi.create_date desc
+    </select>
+
+    <!-- 根据用户ID查询订单信息 -->
+    <select id="queryOrderByUserId" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral,
+        ui.name as userName,
+        ui.images as userImages,
+        ei.id as evaluateId,
+        ei.content as evaluationContent,
+        ci.id as complaintId,
+        ci.status as complaintStatus,
+        ui.phone,
+        ai1.address as startAddress,
+        ai2.address as endAddress
+        from
+        order_info oi
+        left join user_info ui on (ui.id = oi.user_id)
+        left join staff_info si on (si.id = oi.staff_ids)
+        left join evaluate_info ei on (ei.order_id = oi.id)
+        left join address_info ai1 on (ai1.id = oi.start_address_id)
+        left join address_info ai2 on (ai2.id = oi.end_address_id)
+        left join complaint_info ci on (ci.order_code = oi.code)
+        where 1 = 1
+        <if test="userId != null">
+            AND ui.id = #{userId}
+        </if>
+        order by oi.create_date desc
+    </select>
+
+    <!-- 根据用户ID查询接单订单信息 -->
+    <select id="queryOrderListByStaffId" resultType="java.util.LinkedHashMap">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral,
+        ui.name as userName,
+        ui.images as userImages,
+        ei.id as evaluateId,
+        ui.phone,
+        ai1.address as startAddress,
+        ai2.address as endAddress
+        from
+        order_info oi
+        left join user_info ui on (ui.id = oi.user_id)
+        left join staff_info si on (si.id = oi.staff_ids)
+        left join evaluate_info ei on (ei.order_id = oi.id)
+        left join address_info ai1 on (ai1.id = oi.start_address_id)
+        left join address_info ai2 on (ai2.id = oi.end_address_id)
+        where 1 = 1
+        <if test="userId != null">
+            AND si.user_id = #{userId}
+        </if>
+        order by oi.create_date desc
+    </select>
+
+    <!-- 本月订单信息 -->
+    <select id="selectOrderByMonth" resultType="cc.mrbird.febs.cos.entity.OrderInfo">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral
+        from
+        order_info oi
+        where 1 = 1
+        <if test="staffId != null">
+            AND oi.staff_ids = #{staffId}
+        </if>
+        and oi.status != '0'
+        and DATE_FORMAT( oi.create_date, '%Y%m' ) = DATE_FORMAT(
+        CURDATE(),
+        '%Y%m')
+    </select>
+
+    <!-- 本年订单信息 -->
+    <select id="selectOrderByYear" resultType="cc.mrbird.febs.cos.entity.OrderInfo">
+        select
+        oi.id,
+        oi.code,
+        oi.order_name,
+        oi.user_id,
+        oi.total,
+        oi.create_date,
+        oi.remark,
+        oi.status,
+        oi.staff_ids,
+        oi.pay_date,
+        oi.goods_type,
+        oi.images,
+        oi.weight,
+        oi.height,
+        oi.width,
+        oi.start_address_id,
+        oi.end_address_id,
+        oi.delivery_date,
+        oi.logistics_info,
+        oi.finish_date,
+        oi.kilometre,
+        oi.distribution_price,
+        oi.order_price,
+        oi.discount_id,
+        oi.after_order_price,
+        oi.integral
+        from
+        order_info oi
+        where 1 = 1
+        <if test="staffId != null">
+            AND oi.staff_ids = #{staffId}
+        </if>
+        and oi.status != '0'
+        and DATE_FORMAT( oi.create_date, '%Y' ) = DATE_FORMAT(
+        CURDATE(),
+        '%Y')
+    </select>
+
+    <!-- 十天内订单数量统计 -->
+    <select id="selectOrderNumWithinDays" resultType="java.util.LinkedHashMap">
+        SELECT
+        DATE_FORMAT( spo.days, '%m-%d' ) AS days,
+        IFNULL(COUNT(oi.id), 0) AS count
+        FROM
+        (
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 7 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 8 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 9 DAY )) spo
+        LEFT JOIN order_info oi ON (
+        DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' )
+        <if test="staffId != null">
+            AND oi.staff_ids = #{staffId}
+        </if>
+        AND oi.status != '0'
+        )
+        GROUP BY
+        days
+        ORDER BY
+        days ASC
+    </select>
+
+    <!-- 十天内订单收益统计 -->
+    <select id="selectOrderPriceWithinDays" resultType="java.util.LinkedHashMap">
+        SELECT
+        DATE_FORMAT( spo.days, '%m-%d' ) AS days,
+        IFNULL(SUM(oi.after_order_price), 0) AS price
+        FROM
+        (
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 0 DAY ) days UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 1 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 2 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 3 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 4 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 5 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 6 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 7 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 8 DAY ) UNION
+        SELECT
+        DATE_SUB( curdate(), INTERVAL + 9 DAY )) spo
+        LEFT JOIN order_info oi ON (
+        DATE_FORMAT( oi.create_date, '%Y-%m-%d' ) = DATE_FORMAT( spo.days, '%Y-%m-%d' )
+        <if test="staffId != null">
+            AND oi.staff_ids = #{staffId}
+        </if>
+        AND oi.status != '0'
+        )
+        GROUP BY
+        days
+        ORDER BY
+        days ASC
+    </select>
+</mapper>

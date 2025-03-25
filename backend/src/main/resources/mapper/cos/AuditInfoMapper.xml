@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.AuditInfoMapper">
+
+    <!-- 分页获取审核信息 -->
+    <select id="queryAuditPage" resultType="java.util.LinkedHashMap">
+        select ai.id,
+        ai.user_id,
+        ai.images,
+        ai.create_date,
+        ai.audit_status,
+        ai.status_date,
+        ai.introduction,
+        ai.tag,
+        ui.name as userName,
+        ui.code as userCode,
+        ui.images as userImages,
+        ui.phone
+        from audit_info ai
+        left join user_info ui on (ui.id = ai.user_id)
+        where 1 = 1
+        <if test="auditInfo.merchantCode != null and auditInfo.merchantCode != ''">
+            AND mi.code LIKE CONCAT('%',#{auditInfo.merchantCode},'%')
+        </if>
+        <if test="auditInfo.merchantName != null and auditInfo.merchantName != ''">
+            AND ui.name LIKE CONCAT('%',#{auditInfo.merchantName},'%')
+        </if>
+        <if test="auditInfo.auditStatus != null">
+            AND ai.audit_status = #{auditInfo.auditStatus}
+        </if>
+        <if test="auditInfo.userId != null">
+            AND ui.id = #{auditInfo.userId}
+        </if>
+        order by ai.create_date desc
+
+    </select>
+</mapper>
