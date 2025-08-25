@@ -69,7 +69,6 @@ admin
 | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/89b86181-eb7a-4a13-a4eb-681fdd91dc24.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/a6e218ec-7bdb-4f95-b6a2-d71f6729498b.png) |
 | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/004a760d-16c3-4ee6-b5af-227005f2c87d.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/91432dd2-a237-4b80-b3d6-5e04efbce207.png) |
 | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/0d5417e1-4e2a-454c-bbbb-1323980a2d85.png) | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/img/68231e46-283f-46c1-b6ae-dab14bfd0ca0.png) |
-
 | ![](https://fank-bucket-oss.oss-cn-beijing.aliyuncs.com/work/936e9baf53eb9a217af4f89c616dc19.png) |
 
 #### 演示视频
